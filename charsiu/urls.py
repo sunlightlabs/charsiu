@@ -1,17 +1,7 @@
 from django.conf.urls import patterns, include, url
-
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+from charsiu.views import *
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'charsiu.views.home', name='home'),
-    # url(r'^charsiu/', include('charsiu.foo.urls')),
-
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
+    url(r'^$', IndexView.as_view(), name='index'),
+    url(r'^comment/(?P<document_id>[A-Z0-9_-]+$)', CommentView.as_view(), name='comment'),
 )
