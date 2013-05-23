@@ -4,9 +4,56 @@
 {% block main %}
 <form method="post">
     {% csrf_token %}
-    {{ form|as_bootstrap }}
+    
+    {% if form.non_field_errors %}
+        {% include "bootstrap_toolkit/non_field_errors.html" %}
+    {% endif %}
+
+    {% for field in form.hidden_fields %}
+        {% for error in field.errors %}
+            {% include "bootstrap_toolkit/non_field_error.html" %}
+        {% endfor %}
+    {% endfor %}
+
+    {% for fieldset in form.fieldsets %}
+        <fieldset class="{{ fieldset.classes }}">
+        {% if fieldset.legend %}
+            <legend>{{ fieldset.legend }}</legend>
+        {% endif %}
+        {% if fieldset.description %}
+            <p class="description">{{ fieldset.description }}</p>
+        {% endif %}
+        
+        {% for field in fieldset %}
+            {% if not field.name|lower in exclude|lower|split:',' %}
+                {% if not fields or field.name|lower in fields|lower|split:','  %}
+                    {% include "bootstrap_toolkit/field.html" %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        </fieldset>
+    {% endfor %}
+
     <div class="form-actions">
         <button type="submit" class="btn btn-primary">save</button>
     </div>
 </form>
+
+<script type="text/javascript">
+    // hack to rearrange some inputs
+    $('.control-group').each(function() {
+        var $this = $(this);
+        var withMatches = $(this).find('input[data-textbox-mapping]');
+        if (withMatches.length) {
+            var matches = JSON.parse(withMatches.eq(0).attr('data-textbox-mapping'));
+            $.each(matches, function(key, value) {
+                var textField = $('#id_' + value);
+                var parent = textField.parents('.control-group');
+                textField.addClass('inline').remove();
+                parent.remove();
+                $this.find('input[value=' + key + ']').parent().append(textField);
+            })
+        }
+    })
+</script>
 {% endblock %}

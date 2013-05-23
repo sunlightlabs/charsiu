@@ -1,22 +1,13 @@
+input.inline {
+    font-size: 80%;
+    height: 1em;
+    margin-bottom: 0;
+}
 
+fieldset legend {
+    margin-bottom: 0;
+}
 
-/* ==========================================================================
-   Author's custom styles
-   ========================================================================== */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.control-group {
+    margin-bottom: 25px;
+}

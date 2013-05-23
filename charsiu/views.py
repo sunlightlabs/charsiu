@@ -5,6 +5,7 @@ from django.conf import settings
 from django import forms
 
 from form_utils.forms import BetterForm
+import json
 
 # index
 class IndexView(TemplateView):
@@ -16,6 +17,7 @@ class IndexView(TemplateView):
 # comment viewer/survey
 class CommentForm(BetterForm):
     from_company = forms.ChoiceField(
+        widget = forms.RadioSelect,
         label = 'Was this comment submitted by or on behalf of a company?',
         choices = (
             ('yes', 'Yes'),
@@ -25,6 +27,7 @@ class CommentForm(BetterForm):
     )
 
     from_official = forms.ChoiceField(
+        widget = forms.RadioSelect,
         label = 'Was this comment submitted by an elected official?',
         choices = (
             ('yes', 'Yes'),
@@ -35,18 +38,22 @@ class CommentForm(BetterForm):
 
     # entity ID/name fields
     entity_info = forms.ChoiceField(
+        widget = forms.RadioSelect(attrs={'data-textbox-mapping': json.dumps({'in_ie':'entity_id','not_in_ie':'entity_name'})}),
+        required = False,
         label = 'Which company or official, and is it/are they in Influence Explorer?',
         choices = (
             ('in_ie', 'The entity is in Influence Explorer and its ID or URL is:'),
             ('not_in_ie', 'The entity is not in Influence Explorer and its name is:'),
         )
     )
-    entity_id = forms.CharField()
-    entity_name = forms.CharField()
+    entity_id = forms.CharField(required = False)
+    entity_name = forms.CharField(required = False)
 
     # entity source
-    entity_source = forms.ChoiceField(
-        label = 'How do you know which official or company submitted the comment?',
+    entity_source = forms.MultipleChoiceField(
+        widget = forms.CheckboxSelectMultiple(attrs={'data-textbox-mapping': json.dumps({'other':'entity_source_other'})}),
+        required = False,
+        label = 'How do you know which official or company submitted the comment? (select all relevant answers)',
         choices = (
             ('in_submitter_meta', "Its name is in the document's submitter metadata"),
             ('in_comment_title', 'Its name is in the comment title (please annotate)'),
@@ -54,11 +61,12 @@ class CommentForm(BetterForm):
             ('other', 'Other (please specify)'),
         )
     )
-    entity_source_annotation = forms.CharField()
-    entity_source_other = forms.CharField()
+    entity_source_annotation = forms.CharField(widget=forms.HiddenInput(), required=False)
+    entity_source_other = forms.CharField(required=False)
 
     # classification questions
     sentiment = forms.ChoiceField(
+        widget = forms.RadioSelect,
         label = "Describe this commenter's sentiment with respect to the rulemaking:",
         choices = (
             ('negative_rule', 'This commenter expresses a negative sentiment about the rule'),
@@ -71,7 +79,8 @@ class CommentForm(BetterForm):
     )
 
 
-    substantive = forms.ChoiceField(
+    substantiveness = forms.ChoiceField(
+        widget = forms.RadioSelect,
         label = 'Describe the substantiveness of the comment:',
         choices = (
             ('substantive', "This commenter makes expresses a substantive view that's supported by underlying data or facts"),
@@ -83,6 +92,7 @@ class CommentForm(BetterForm):
 
     # classification questions
     big_small_government = forms.ChoiceField(
+        widget = forms.RadioSelect,
         label = 'Describe the perspective this comment expresses about government:',
         choices = (
             ('big_gov_specific', 'This comment advocates government intervention in this policy area'),
@@ -95,9 +105,17 @@ class CommentForm(BetterForm):
     )
 
     # misc
-    notes = forms.CharField()
-    flag = forms.BooleanField()
-    main_view = forms.CharField()
+    notes = forms.CharField(label="Additional notes", widget=forms.Textarea(attrs={'cols':80, 'style': 'width:auto;'}), required=False)
+    flag = forms.BooleanField(label="Flag for further review", required=False)
+    main_view = forms.CharField(widget=forms.HiddenInput())
+
+    class Meta:
+        fieldsets = [
+            ('entities', {'fields': ['from_company', 'from_official', 'entity_info', 'entity_id', 'entity_name', 'entity_source', 'entity_source_annotation', 'entity_source_other'], 'legend': 'Submitter Information'}),
+            ('classification', {'fields': ['sentiment', 'substantiveness', 'big_small_government'], 'legend': 'Classification'}),
+            ('misc', {'fields': ['notes', 'flag', 'main_view'], 'legend': 'Additional Information'})
+        ]
+        row_attrs = {'entity_id': {'skip': True}, 'entity_name': {'skip': True}, 'entity_source_other': {'skip': True}}
 
 
 class CommentView(FormView):
