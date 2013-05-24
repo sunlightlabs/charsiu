@@ -11,3 +11,10 @@ fieldset legend {
 .control-group {
     margin-bottom: 25px;
 }
+
+.metadata dt, dd {
+    float: left;
+}
+.metadata dt {
+    clear: left;
+}

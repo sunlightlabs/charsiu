@@ -5,7 +5,7 @@ from django.conf import settings
 from django import forms
 
 from form_utils.forms import BetterForm
-import json
+import json, urllib2
 
 # index
 class IndexView(TemplateView):
@@ -117,8 +117,20 @@ class CommentForm(BetterForm):
         ]
         row_attrs = {'entity_id': {'skip': True}, 'entity_name': {'skip': True}, 'entity_source_other': {'skip': True}}
 
-
+DW_ROOT = getattr(settings, "DW_ROOT", "http://docketwrench.sunlightfoundation.com/")
 class CommentView(FormView):
     template_name = "comment.html"
     success_url = 'http://www.google.com'
     form_class = CommentForm
+
+    def get(self, *args, **kwargs):
+        self.document_id = kwargs['document_id']
+        return super(CommentView, self).get(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        ctx = super(CommentView, self).get_context_data(**kwargs)
+        
+        ctx['document'] = json.load(urllib2.urlopen(DW_ROOT + "api/1.0/document/%s" % self.document_id))
+        ctx['submitter'] = dict(dict(ctx['document']['clean_details']).get('Submitter Information', []))
+
+        return ctx

@@ -2,42 +2,54 @@
 {% load bootstrap_toolkit %}
 
 {% block main %}
-<form method="post">
-    {% csrf_token %}
-    
-    {% if form.non_field_errors %}
-        {% include "bootstrap_toolkit/non_field_errors.html" %}
-    {% endif %}
-
-    {% for field in form.hidden_fields %}
-        {% for error in field.errors %}
-            {% include "bootstrap_toolkit/non_field_error.html" %}
-        {% endfor %}
-    {% endfor %}
-
-    {% for fieldset in form.fieldsets %}
-        <fieldset class="{{ fieldset.classes }}">
-        {% if fieldset.legend %}
-            <legend>{{ fieldset.legend }}</legend>
-        {% endif %}
-        {% if fieldset.description %}
-            <p class="description">{{ fieldset.description }}</p>
-        {% endif %}
-        
-        {% for field in fieldset %}
-            {% if not field.name|lower in exclude|lower|split:',' %}
-                {% if not fields or field.name|lower in fields|lower|split:','  %}
-                    {% include "bootstrap_toolkit/field.html" %}
-                {% endif %}
-            {% endif %}
-        {% endfor %}
-        </fieldset>
-    {% endfor %}
-
-    <div class="form-actions">
-        <button type="submit" class="btn btn-primary">save</button>
+<div class="row">
+    <div class="span6">
+        <h2>Comment {{ document.id }}</h2>
+        <h3>Metadata:</h3>
+        <div class="metadata">
+            {% include "metadata.html" %}
+        </div>
     </div>
-</form>
+    <div class="span6">
+        <h2>Survey</h2>
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                {% include "bootstrap_toolkit/non_field_errors.html" %}
+            {% endif %}
+
+            {% for field in form.hidden_fields %}
+                {% for error in field.errors %}
+                    {% include "bootstrap_toolkit/non_field_error.html" %}
+                {% endfor %}
+            {% endfor %}
+
+            {% for fieldset in form.fieldsets %}
+                <fieldset class="{{ fieldset.classes }}">
+                {% if fieldset.legend %}
+                    <legend>{{ fieldset.legend }}</legend>
+                {% endif %}
+                {% if fieldset.description %}
+                    <p class="description">{{ fieldset.description }}</p>
+                {% endif %}
+                
+                {% for field in fieldset %}
+                    {% if not field.name|lower in exclude|lower|split:',' %}
+                        {% if not fields or field.name|lower in fields|lower|split:','  %}
+                            {% include "bootstrap_toolkit/field.html" %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                </fieldset>
+            {% endfor %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">save</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <script type="text/javascript">
     // hack to rearrange some inputs

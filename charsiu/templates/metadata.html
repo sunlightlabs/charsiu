@@ -1,0 +1,26 @@
+{% load charsiu_extras %}
+<dl>
+    <dt>Title:</dt>
+    <dd>{{ document.title }}</dd>
+
+    <dt>Name:</dt>
+    <dd>{{ submitter.Name|default:"[none]" }}</dd>
+
+    <dt>Organization:</dt>
+    <dd>{{ submitter.Organization|default:"[none]" }}</dd>
+
+    <dt>Location:</dt>
+    <dd>{{ submitter.Location|default:"[none]" }}</dd>
+
+    <dt>Email Address:</dt>
+    <dd>{{ submitter|get:"Email Address"|default:"[none]" }}</dd>
+
+    <dt>Phone Number:</dt>
+    <dd>{{ submitter|get:"Phone Number"|default:"[none]" }}</dd>
+
+    <dt>Fax Number:</dt>
+    <dd>{{ submitter|get:"Fax Number"|default:"[none]" }}</dd>
+
+    <dt>Submitter's Representative:</dt>
+    <dd>{{ submitter|get:"Submitter's Representative"|default:"[none]" }}</dd>
+</dl>

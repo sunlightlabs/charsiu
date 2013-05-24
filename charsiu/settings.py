@@ -60,4 +60,5 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'bootstrap_toolkit',
+    'charsiu.charsiu_extras',
 )
