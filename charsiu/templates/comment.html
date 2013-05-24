@@ -2,15 +2,47 @@
 {% load bootstrap_toolkit %}
 
 {% block main %}
-<div class="row">
-    <div class="span6">
+<div class="row-fluid comment-page">
+    <div class="span6 comment">
         <h2>Comment {{ document.id }}</h2>
-        <h3>Metadata:</h3>
+        <h3>Metadata</h3>
         <div class="metadata">
             {% include "metadata.html" %}
         </div>
+
+        <h3>Comment Text</h3>
+        <div class="doc-text">
+            
+            <div class="accordion" id="accordion2">
+                <div class="accordion-group">
+                    <div class="accordion-heading">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+                            Collapsible Group Item #1
+                        </a>
+                    </div>
+                    <div id="collapseOne" class="accordion-body collapse in">
+                        <div class="accordion-inner">
+                            Anim pariatur cliche...
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-group">
+                    <div class="accordion-heading">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+                            Collapsible Group Item #2
+                        </a>
+                    </div>
+                    <div id="collapseTwo" class="accordion-body collapse">
+                        <div class="accordion-inner">
+                            Anim pariatur cliche...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
-    <div class="span6">
+    <div class="span6 survey">
         <h2>Survey</h2>
         <form method="post">
             {% csrf_token %}
@@ -28,7 +60,7 @@
             {% for fieldset in form.fieldsets %}
                 <fieldset class="{{ fieldset.classes }}">
                 {% if fieldset.legend %}
-                    <legend>{{ fieldset.legend }}</legend>
+                    <h3>{{ fieldset.legend }}</h3>
                 {% endif %}
                 {% if fieldset.description %}
                     <p class="description">{{ fieldset.description }}</p>

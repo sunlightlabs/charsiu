@@ -4,17 +4,33 @@ input.inline {
     margin-bottom: 0;
 }
 
-fieldset legend {
-    margin-bottom: 0;
-}
-
 .control-group {
     margin-bottom: 25px;
 }
 
+.metadata {
+    margin-bottom: 20px;
+}
 .metadata dt, dd {
     float: left;
 }
 .metadata dt {
     clear: left;
+}
+
+.comment-page h3 {
+    display: block;
+    width: 100%;
+    padding: 0;
+    font-size: 21px;
+    line-height: 40px;
+    color: #333;
+    border: 0;
+    border-bottom: 1px solid #e5e5e5;
+    font-weight: normal;
+    margin: 0 0 20px 0;
+}
+
+.clear {
+    clear: both;
 }
