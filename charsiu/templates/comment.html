@@ -1,6 +1,13 @@
 {% extends "base.html" %}
 {% load bootstrap_toolkit %}
 
+{% block extrahead %}
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
+<script src="/static/js/vendor/annotator.min.js"></script>
+<script src="/static/js/annotator_patch.js"></script>
+<link rel="stylesheet" href="/static/css/annotator.min.css" />
+{% endblock %}
+
 {% block main %}
 <div class="container-fluid max-height no-overflow">
 
@@ -9,7 +16,7 @@
         <div class="comment">
             <h2>Comment {{ document.id }}</h2>
             <h3>Metadata</h3>
-            <div class="metadata">
+            <div class="metadata annotatable">
                 {% include "metadata.html" %}
             </div>
 
@@ -34,7 +41,7 @@
                                     {% for view in attachment.views %}
                                     <div class="tab-pane {% if forloop.counter0 == 0 %}active{% endif %}" id="tab-{{ forloop.parentloop.counter0 }}-{{ forloop.counter0 }}">
                                         <div class="full-text">
-                                            <div class="full-text-body">
+                                            <div class="full-text-body annotatable">
                                                 {{ view.body|safe }}
                                             </div>
                                         </div>
@@ -127,5 +134,7 @@
             })
         }
     })
+
+    $('.annotatable').annotator();
 </script>
 {% endblock %}
