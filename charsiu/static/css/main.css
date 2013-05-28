@@ -105,3 +105,11 @@ input.inline {
 .submit-bar .pull-right .btn {
     margin-left: 4px;
 }
+
+.canonical-selection {
+    margin: 8px;
+    margin-top: 0;
+}
+.canonical-selection input {
+    margin: 0;
+}

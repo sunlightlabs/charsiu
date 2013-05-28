@@ -4,6 +4,8 @@
 {% block extrahead %}
 <script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
 <script src="/static/js/vendor/annotator.min.js"></script>
+<script src="/static/js/vendor/annotator.tags.min.js"></script>
+<script src="/static/js/vendor/annotator.store.min.js"></script>
 <script src="/static/js/annotator_patch.js"></script>
 <link rel="stylesheet" href="/static/css/annotator.min.css" />
 {% endblock %}
@@ -16,7 +18,7 @@
         <div class="comment">
             <h2>Comment {{ document.id }}</h2>
             <h3>Metadata</h3>
-            <div class="metadata annotatable">
+            <div id="document-metadata" class="metadata annotatable">
                 {% include "metadata.html" %}
             </div>
 
@@ -40,8 +42,11 @@
                                 <div class="tab-content">
                                     {% for view in attachment.views %}
                                     <div class="tab-pane {% if forloop.counter0 == 0 %}active{% endif %}" id="tab-{{ forloop.parentloop.counter0 }}-{{ forloop.counter0 }}">
+                                        <div class="canonical-selection">
+                                            <input type="checkbox" class="canonical-view" name="canonical-{{ view.object_id }}_{{ view.file_type }}" data-view-id="{{ view.object_id }}_{{ view.file_type }}" /> This is the canonical representation of this document.
+                                        </div>
                                         <div class="full-text">
-                                            <div class="full-text-body annotatable">
+                                            <div id="view-{{ view.object_id }}_{{ view.file_type }}" class="full-text-body annotatable">
                                                 {{ view.body|safe }}
                                             </div>
                                         </div>
@@ -59,7 +64,7 @@
     <div class="span6 scrollable">
         <div class="survey">
             <h2>Survey</h2>
-            <form method="post">
+            <form id="comment-form" method="post">
                 {% csrf_token %}
                 
                 {% if form.non_field_errors %}
@@ -90,10 +95,6 @@
                     {% endfor %}
                     </fieldset>
                 {% endfor %}
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">save</button>
-                </div>
             </form>
         </div>
     </div>
@@ -110,8 +111,8 @@
                 </ul>
                 <ul class="nav pull-right">
                     <li><input type="button" class="btn btn-warning" value="Skip" /></li>
-                    <li><input type="submit" class="btn btn-info" value="Save &amp; exit" /></li>
-                    <li><input type="submit" class="btn btn-primary" value="Save &amp; continue" /></li>
+                    <li><input type="submit" class="btn btn-info" data-submit-param="exit" value="Save &amp; exit" /></li>
+                    <li><input type="submit" class="btn btn-primary" data-submit-param="continue" value="Save &amp; continue" /></li>
                 </ul>
             </div>
         </div>
@@ -119,6 +120,7 @@
 </div>
 
 <script type="text/javascript">
+(function() {
     // hack to rearrange some inputs
     $('.control-group').each(function() {
         var $this = $(this);
@@ -135,6 +137,53 @@
         }
     })
 
-    $('.annotatable').annotator();
+    $('.annotatable').annotator().annotator('addPlugin', 'Tags').annotator('addPlugin', 'Store');
+
+    // deserialize serialized fields
+
+    // deserialize the canonical representations
+    var canonical = $('#id_main_view').val();
+    if (canonical) {
+        var views = JSON.parse(canonical);
+        $.each(views, function(idx, id) {
+            $("input.canonical-view[data-view-id=" + id + "]").prop("checked", true);
+        })
+    }
+
+    // deserialize the annotations
+    var annotations = $('#id_entity_source_annotation').val();
+    if (annotations) {
+        var parsed = JSON.parse(annotations);
+        $.each(parsed, function(id, value) {
+            $('#' + id).data('annotator').loadAnnotations(value);
+        })
+    }
+
+    $('#comment-form').on('submit', function(evt) {
+        // serialize fields
+
+        // serialize the canonical representations
+        var canonical = [];
+        $('input.canonical-view:checked').each(function() {
+            canonical.push($(this).attr('data-view-id'));
+        })
+        $('#id_main_view').val(JSON.stringify(canonical));
+
+        // serialize the annotations
+        var annotations = {};
+        $('.annotatable').each(function() {
+            var $this = $(this);
+            annotations[$this.attr('id')] = $this.data('annotator').dumpAnnotations();
+        })
+        $('#id_entity_source_annotation').val(JSON.stringify(annotations));
+    });
+
+    $('.navbar-fixed-bottom input[type=submit]').click(function(evt) {
+        var form = $('#comment-form');
+        form.attr('action', '?' + $(evt.target).attr('data-submit-param'));
+        form.submit();
+        evt.preventDefault();
+    });
+})();
 </script>
 {% endblock %}

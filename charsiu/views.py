@@ -19,7 +19,7 @@ class IndexView(TemplateView):
 class CommentForm(BetterForm):
     from_company = forms.ChoiceField(
         widget = forms.RadioSelect,
-        label = 'Was this comment submitted by or on behalf of a company?',
+        label = 'Was this comment submitted by or on behalf of an organization or company?',
         choices = (
             ('yes', 'Yes'),
             ('no', 'No'),
@@ -56,9 +56,9 @@ class CommentForm(BetterForm):
         required = False,
         label = 'How do you know which official or company submitted the comment? (select all relevant answers)',
         choices = (
-            ('in_submitter_meta', "Its name is in the document's submitter metadata"),
-            ('in_comment_title', 'Its name is in the comment title (please annotate)'),
-            ('in_comment_text', 'Its name is in the comment text (please annotate)'),
+            ('in_submitter_meta', "Its name is in the document's submitter metadata (please annotate with tag \"submitter\")"),
+            ('in_comment_title', 'Its name is in the comment title (please annotate with tag "submitter")'),
+            ('in_comment_text', 'Its name is in the comment text (please annotate with tag "submitter")'),
             ('other', 'Other (please specify)'),
         )
     )
@@ -108,7 +108,7 @@ class CommentForm(BetterForm):
     # misc
     notes = forms.CharField(label="Additional notes", widget=forms.Textarea(attrs={'cols':80, 'style': 'width:auto;'}), required=False)
     flag = forms.BooleanField(label="Flag for further review", required=False)
-    main_view = forms.CharField(widget=forms.HiddenInput())
+    main_view = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     class Meta:
         fieldsets = [
@@ -127,6 +127,10 @@ class CommentView(FormView):
     def get(self, *args, **kwargs):
         self.document_id = kwargs['document_id']
         return super(CommentView, self).get(*args, **kwargs)
+
+    def post(self, *args, **kwargs):
+        self.document_id = kwargs['document_id']
+        return super(CommentView, self).post(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         ctx = super(CommentView, self).get_context_data(**kwargs)

@@ -64,4 +64,7 @@ Annotator.prototype.onHighlightMouseover = function(event) {
   return this.showViewer($.makeArray(annotations), relPosition($(event.target)));
 };
 
+// make API requests a noop
+Annotator.Plugin.Store.prototype._apiRequest = function() {};
+
 })();
