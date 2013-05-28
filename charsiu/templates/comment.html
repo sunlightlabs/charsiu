@@ -2,84 +2,112 @@
 {% load bootstrap_toolkit %}
 
 {% block main %}
-<div class="row-fluid comment-page">
-    <div class="span6 comment">
-        <h2>Comment {{ document.id }}</h2>
-        <h3>Metadata</h3>
-        <div class="metadata">
-            {% include "metadata.html" %}
-        </div>
+<div class="container-fluid max-height no-overflow">
 
-        <h3>Comment Text</h3>
-        <div class="doc-text">
-            
-            <div class="accordion" id="accordion2">
-                <div class="accordion-group">
-                    <div class="accordion-heading">
-                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
-                            Collapsible Group Item #1
-                        </a>
-                    </div>
-                    <div id="collapseOne" class="accordion-body collapse in">
-                        <div class="accordion-inner">
-                            Anim pariatur cliche...
-                        </div>
-                    </div>
-                </div>
-                <div class="accordion-group">
-                    <div class="accordion-heading">
-                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
-                            Collapsible Group Item #2
-                        </a>
-                    </div>
-                    <div id="collapseTwo" class="accordion-body collapse">
-                        <div class="accordion-inner">
-                            Anim pariatur cliche...
-                        </div>
-                    </div>
-                </div>
+<div class="row-fluid comment-page max-height">
+    <div class="span6 scrollable">
+        <div class="comment">
+            <h2>Comment {{ document.id }}</h2>
+            <h3>Metadata</h3>
+            <div class="metadata">
+                {% include "metadata.html" %}
             </div>
 
+            <h3>Comment Text</h3>
+            <div class="doc-text">
+                <div class="accordion" id="doc-accordion">
+                    {% for attachment in combined_attachments %}
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#doc-accordion" href="#collapse-{{ forloop.counter0 }}">
+                                {{ attachment.title }}
+                            </a>
+                        </div>
+                        <div id="collapse-{{ forloop.counter0 }}" class="accordion-body collapse {% if forloop.counter0 == 0 %}in{% endif %}">
+                            <div class="accordion-inner">
+                                <ul class="nav nav-tabs">
+                                    {% for view in attachment.views %}
+                                    <li {% if forloop.counter0 == 0 %}class="active"{% endif %}><a href="#tab-{{ forloop.parentloop.counter0 }}-{{ forloop.counter0 }}" data-toggle="tab">{{ view.file_type }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                                <div class="tab-content">
+                                    {% for view in attachment.views %}
+                                    <div class="tab-pane {% if forloop.counter0 == 0 %}active{% endif %}" id="tab-{{ forloop.parentloop.counter0 }}-{{ forloop.counter0 }}">
+                                        <div class="full-text">
+                                            <div class="full-text-body">
+                                                {{ view.body|safe }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
-    <div class="span6 survey">
-        <h2>Survey</h2>
-        <form method="post">
-            {% csrf_token %}
-            
-            {% if form.non_field_errors %}
-                {% include "bootstrap_toolkit/non_field_errors.html" %}
-            {% endif %}
-
-            {% for field in form.hidden_fields %}
-                {% for error in field.errors %}
-                    {% include "bootstrap_toolkit/non_field_error.html" %}
-                {% endfor %}
-            {% endfor %}
-
-            {% for fieldset in form.fieldsets %}
-                <fieldset class="{{ fieldset.classes }}">
-                {% if fieldset.legend %}
-                    <h3>{{ fieldset.legend }}</h3>
-                {% endif %}
-                {% if fieldset.description %}
-                    <p class="description">{{ fieldset.description }}</p>
-                {% endif %}
+    <div class="span6 scrollable">
+        <div class="survey">
+            <h2>Survey</h2>
+            <form method="post">
+                {% csrf_token %}
                 
-                {% for field in fieldset %}
-                    {% if not field.name|lower in exclude|lower|split:',' %}
-                        {% if not fields or field.name|lower in fields|lower|split:','  %}
-                            {% include "bootstrap_toolkit/field.html" %}
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-                </fieldset>
-            {% endfor %}
+                {% if form.non_field_errors %}
+                    {% include "bootstrap_toolkit/non_field_errors.html" %}
+                {% endif %}
 
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">save</button>
+                {% for field in form.hidden_fields %}
+                    {% for error in field.errors %}
+                        {% include "bootstrap_toolkit/non_field_error.html" %}
+                    {% endfor %}
+                {% endfor %}
+
+                {% for fieldset in form.fieldsets %}
+                    <fieldset class="{{ fieldset.classes }}">
+                    {% if fieldset.legend %}
+                        <h3>{{ fieldset.legend }}</h3>
+                    {% endif %}
+                    {% if fieldset.description %}
+                        <p class="description">{{ fieldset.description }}</p>
+                    {% endif %}
+                    
+                    {% for field in fieldset %}
+                        {% if not field.name|lower in exclude|lower|split:',' %}
+                            {% if not fields or field.name|lower in fields|lower|split:','  %}
+                                {% include "bootstrap_toolkit/field.html" %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    </fieldset>
+                {% endfor %}
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<div class="navbar navbar-inverse navbar-fixed-bottom submit-bar">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <div class="nav-collapse collapse">
+                <ul class="nav pull-left">
+                    <li><input type="button" class="btn btn-danger" value="Exit" /></li>
+                </ul>
+                <ul class="nav pull-right">
+                    <li><input type="button" class="btn btn-warning" value="Skip" /></li>
+                    <li><input type="submit" class="btn btn-info" value="Save &amp; exit" /></li>
+                    <li><input type="submit" class="btn btn-primary" value="Save &amp; continue" /></li>
+                </ul>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 

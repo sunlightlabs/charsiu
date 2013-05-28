@@ -5,7 +5,8 @@ from django.conf import settings
 from django import forms
 
 from form_utils.forms import BetterForm
-import json, urllib2
+import json, urllib2, urlparse
+import bs4
 
 # index
 class IndexView(TemplateView):
@@ -132,5 +133,17 @@ class CommentView(FormView):
         
         ctx['document'] = json.load(urllib2.urlopen(DW_ROOT + "api/1.0/document/%s" % self.document_id))
         ctx['submitter'] = dict(dict(ctx['document']['clean_details']).get('Submitter Information', []))
+        ctx['combined_attachments'] = [{'title': 'Main Views', 'views': realize_views(ctx['document']['views'])}] + \
+            [{'title': 'Attachment: ' + at['title'], 'views': realize_views(at['views'])} for at in ctx['document']['attachments']]
 
         return ctx
+
+# download and slightly mangle the views
+def realize_views(views):
+    for view in views:
+        if view['extracted']:
+            html = urllib2.urlopen(urlparse.urljoin(DW_ROOT, view['html'])).read()
+            doc = bs4.BeautifulSoup(html)
+            view['body'] = u"".join([unicode(n) for n in doc.body.contents]) if doc.body else ""
+            view['styles'] = doc.head.findAll('style') if doc.head else []
+    return views

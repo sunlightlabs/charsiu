@@ -1,3 +1,44 @@
+/* scrollable stuff */
+body, html {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.container-fluid.max-height {
+    padding: 0;
+}
+
+.scrollable {
+    height: calc(100% - 85px);
+    overflow-y: auto;
+}
+
+.max-height {
+    height: 100%;
+}
+
+.no-overflow {
+    overflow: hidden;
+}
+
+.pad40-top {
+    padding-top: 40px;
+}
+
+.comment, .survey {
+    padding: 10px;
+}
+.comment {
+    background: #ffffff;
+    min-height: 98%;
+}
+
+/* other stuff */
 input.inline {
     font-size: 80%;
     height: 1em;
@@ -10,6 +51,9 @@ input.inline {
 
 .metadata {
     margin-bottom: 20px;
+    padding: 10px;
+    background: #eeeeff;
+    border: 1px solid #e5e5e5;
 }
 .metadata dt, dd {
     float: left;
@@ -31,6 +75,33 @@ input.inline {
     margin: 0 0 20px 0;
 }
 
+.comment-page {
+    background: #f0f0f0;
+}
+
 .clear {
     clear: both;
+}
+
+.accordion-heading {
+    background: #e5e5e5;
+}
+.full-text {
+    height: 580px;
+    padding: 10px;
+    overflow: auto;
+    border: 1px solid #e5e5e5;
+    font-size: 80%;
+    background: #eeeeff;
+}
+.full-text pre {
+    margin:0;
+    padding:0;
+    border:0;
+    background: transparent;
+    font-size: inherit;
+}
+
+.submit-bar .pull-right .btn {
+    margin-left: 4px;
 }
