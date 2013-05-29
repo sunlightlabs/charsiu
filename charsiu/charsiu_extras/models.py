@@ -6,3 +6,4 @@ class Survey(models.Model):
     completed = models.BooleanField(default=False)
     history = PickledObjectField(default=[])
     response = PickledObjectField(default={})
+    skipped = models.BooleanField(default=False)
