@@ -1,5 +1,5 @@
 Django==1.5.1
 django-bootstrap-toolkit==2.12.0
--e git+https://github.com/stochastic-technologies/goatfish.git#egg=goatfish
 django-form-utils
+html5lib
 beautifulsoup4

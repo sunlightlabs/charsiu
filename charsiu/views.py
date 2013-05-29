@@ -200,7 +200,7 @@ def realize_views(views):
     for view in views:
         if view['extracted']:
             html = urllib2.urlopen(urlparse.urljoin(DW_ROOT, view['html'])).read()
-            doc = bs4.BeautifulSoup(html)
+            doc = bs4.BeautifulSoup(html, 'html5lib')
             view['body'] = u"".join([unicode(n) for n in doc.body.contents]) if doc.body else ""
             view['styles'] = doc.head.findAll('style') if doc.head else []
     return views
