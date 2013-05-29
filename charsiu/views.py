@@ -16,7 +16,7 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         return {
-            'surveys': Survey.objects.all().order_by('completed', '-skipped', 'id')
+            'surveys': Survey.objects.all().order_by('completed', 'skipped', 'id')
         }
 
 # comment viewer/survey
@@ -125,7 +125,6 @@ class CommentForm(BetterForm):
 DW_ROOT = getattr(settings, "DW_ROOT", "http://docketwrench.sunlightfoundation.com/")
 class CommentView(FormView):
     template_name = "comment.html"
-    success_url = '/'
     form_class = CommentForm
 
     def get(self, *args, **kwargs):
@@ -171,6 +170,30 @@ class CommentView(FormView):
         survey.save()
 
         return super(CommentView, self).form_valid(form)
+
+    def get_success_url(self):
+        if 'continue' in self.request.GET:
+            return '/next'
+        else:
+            return '/'
+
+class NextView(RedirectView):
+    permanent = False
+    def get_redirect_url(self):
+        next = list(Survey.objects.filter(completed=False, skipped=False).order_by('?')[:1])
+        if next:
+            return '/comment/' + next[0].id
+        else:
+            return '/'
+
+class SkipView(NextView):
+    def get_redirect_url(self, document_id):
+        surveys = list(Survey.objects.filter(id=document_id))
+        if surveys:
+            survey = surveys[0]
+            survey.skipped = True
+            survey.save()
+        return super(SkipView, self).get_redirect_url()
 
 # download and slightly mangle the views
 def realize_views(views):

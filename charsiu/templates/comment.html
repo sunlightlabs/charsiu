@@ -148,10 +148,10 @@ body {
         <div class="container-fluid">
             <div class="nav-collapse collapse">
                 <ul class="nav pull-left">
-                    <li><input type="button" class="btn btn-danger" value="Exit" /></li>
+                    <li><input type="button" class="btn btn-danger link-button" value="Exit" data-href="/" /></li>
                 </ul>
                 <ul class="nav pull-right">
-                    <li><input type="button" class="btn btn-warning" value="Skip" /></li>
+                    <li><input type="button" class="btn btn-warning link-button" value="Skip" data-href="/skip/{{ document.id }}" /></li>
                     <li><input type="submit" class="btn btn-info" data-submit-param="exit" value="Save &amp; exit" /></li>
                     <li><input type="submit" class="btn btn-primary" data-submit-param="continue" value="Save &amp; continue" /></li>
                 </ul>
@@ -225,6 +225,9 @@ body {
         form.submit();
         evt.preventDefault();
     });
+
+    // fake link button things
+    $('.link-button').click(function() { document.location.href = $(this).attr('data-href'); })
 })();
 </script>
 {% endblock %}

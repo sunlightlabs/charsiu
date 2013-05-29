@@ -107,3 +107,8 @@ input.inline {
 .canonical-selection input {
     margin: 0;
 }
+
+.start {
+    margin-top: 8px;
+    float: right;
+}
