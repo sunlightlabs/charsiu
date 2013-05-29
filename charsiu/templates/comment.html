@@ -58,11 +58,19 @@ body {
                                         <div class="canonical-selection">
                                             <input type="checkbox" class="canonical-view" name="canonical-{{ view.object_id }}_{{ view.file_type }}" data-view-id="{{ view.object_id }}_{{ view.file_type }}" /> This is the canonical representation of this document.
                                         </div>
+                                        {% if view.extracted %}
                                         <div class="full-text">
                                             <div id="view-{{ view.object_id }}_{{ view.file_type }}" class="full-text-body annotatable">
                                                 {{ view.body|safe }}
                                             </div>
                                         </div>
+                                        {% else %}
+                                        <div class="no-text">
+                                            <div class="alert alert-warning">
+                                                We don't have extracted text for this view.  <a href="{{ view.url }}">Download it from Regulations.gov</a> instead.
+                                            </div>
+                                        </div>
+                                        {% endif %}
                                     </div>
                                     {% endfor %}
                                 </div>
