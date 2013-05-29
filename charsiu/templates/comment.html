@@ -86,8 +86,8 @@ body {
                 <ul>
                     {% if document.comment_on %}
                     <li>
-                        <strong>{{ doc_types|get:document.comment_on.type }}:</strong> {{ document.comment_on.title }} ({% if document.comment_on.agency %}{{ document.comment_on.agency }}{% else %}{{ document.agency.id }}{% endif %}) &mdash;
-                        <a href="http://docketwrench.sunlightfoundation.com/document/{{ document.comment_on.document_id }}">DW</a> / <a href="http://www.regulations.gov/#!documentDetail;D={{ document.comment_on.document_id }}">RDG</a>
+                        <strong>{{ doc_types|get:document.comment_on.type }}:</strong> {{ document.comment_on.title }} ({{ document.comment_on.agency.id }}) &mdash;
+                        <a href="http://docketwrench.sunlightfoundation.com/document/{{ document.comment_on.id }}">DW</a> / <a href="http://www.regulations.gov/#!documentDetail;D={{ document.comment_on.id }}">RDG</a>
                     </li>
                     {% endif %}
                     <li>
