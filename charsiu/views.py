@@ -45,7 +45,7 @@ class CommentForm(BetterForm):
     entity_info = forms.ChoiceField(
         widget = forms.RadioSelect(attrs={'data-textbox-mapping': json.dumps({'in_ie':'entity_id','not_in_ie':'entity_name'})}),
         required = False,
-        label = 'Which company or official, and is it/are they in Influence Explorer?',
+        label = 'If applicable, which company or official, and is it/are they in Influence Explorer?',
         choices = (
             ('in_ie', 'The entity is in Influence Explorer and its ID or URL is:'),
             ('not_in_ie', 'The entity is not in Influence Explorer and its name is:'),
@@ -58,7 +58,7 @@ class CommentForm(BetterForm):
     entity_source = forms.MultipleChoiceField(
         widget = forms.CheckboxSelectMultiple(attrs={'data-textbox-mapping': json.dumps({'other':'entity_source_other'})}),
         required = False,
-        label = 'How do you know which official or company submitted the comment? (select all relevant answers)',
+        label = 'If applicable, how do you know which official or company submitted the comment? (select all relevant answers)',
         choices = (
             ('in_submitter_meta', "Its name is in the document's submitter metadata (please annotate with tag \"submitter\")"),
             ('in_comment_title', 'Its name is in the comment title (please annotate with tag "submitter")'),
@@ -136,16 +136,21 @@ class CommentView(FormView):
         return super(CommentView, self).post(*args, **kwargs)
 
     def get_initial(self):
+        self.document = json.load(urllib2.urlopen(DW_ROOT + "api/1.0/document/%s" % self.document_id))
         previous = list(Survey.objects.filter(id=self.document_id))
-        if previous:
+        if previous and previous[0].response:
             return previous[0].response
         else:
-            return {}
+            se = [e for e in self.document.get('submitter_entities', []) if e['type'] == 'organization']
+            if se:
+                return {'entity_source': ['in_submitter_meta'], 'entity_info': u'in_ie', 'entity_id': "http://www.influenceexplorer.com" + se[0]['url'], 'from_company': 'yes', 'from_official': 'no'}
+            else:
+                return {}
 
     def get_context_data(self, **kwargs):
         ctx = super(CommentView, self).get_context_data(**kwargs)
         
-        ctx['document'] = json.load(urllib2.urlopen(DW_ROOT + "api/1.0/document/%s" % self.document_id))
+        ctx['document'] = self.document
         ctx['submitter'] = dict(dict(ctx['document']['clean_details']).get('Submitter Information', []))
         ctx['combined_attachments'] = [{'title': 'Main Views', 'views': realize_views(ctx['document']['views'])}] + \
             [{'title': 'Attachment: ' + at['title'], 'views': realize_views(at['views'])} for at in ctx['document']['attachments']]

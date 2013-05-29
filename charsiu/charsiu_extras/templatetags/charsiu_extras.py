@@ -16,8 +16,7 @@ def get(dict, key, default = ''):
     {{ some_dict|get:"keyB"|get:"subKeyA" }}
     {% for key in keys %}{{ some_dict|get:key }}{% endfor %}
     """
-    print dict
-    print key
+
     try:
         return dict.get(key, default)
     except:
