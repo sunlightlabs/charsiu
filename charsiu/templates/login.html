@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load bootstrap_toolkit %}
+
+{% block main %}
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <h2>Login</h2>
+            <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
+            {% csrf_token %}
+
+            {{ form|as_bootstrap }}
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+            <input type="hidden" name="next" value="{% if next %}{{ next }}{% else %}/{% endif %}" />
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
