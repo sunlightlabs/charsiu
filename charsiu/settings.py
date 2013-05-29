@@ -62,3 +62,8 @@ INSTALLED_APPS = (
     'bootstrap_toolkit',
     'charsiu.charsiu_extras',
 )
+
+try:
+    from local_settings import *
+except:
+    pass

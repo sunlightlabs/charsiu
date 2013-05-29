@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load bootstrap_toolkit %}
+{% load charsiu_extras %}
 
 {% block extrahead %}
 <script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
@@ -70,6 +71,26 @@ body {
                     </div>
                     {% endfor %}
                 </div>
+            </div>
+
+            <h3>External Resources</h3>
+            <div class="external-resources">
+                <ul>
+                    {% if document.comment_on %}
+                    <li>
+                        <strong>{{ doc_types|get:document.comment_on.type }}:</strong> {{ document.comment_on.title }} ({% if document.comment_on.agency %}{{ document.comment_on.agency }}{% else %}{{ document.agency.id }}{% endif %}) &mdash;
+                        <a href="http://docketwrench.sunlightfoundation.com/document/{{ document.comment_on.document_id }}">DW</a> / <a href="http://www.regulations.gov/#!documentDetail;D={{ document.comment_on.document_id }}">RDG</a>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <strong>Original Document:</strong>
+                        <a href="http://docketwrench.sunlightfoundation.com/document/{{ document.id }}">DW</a> / <a href="http://www.regulations.gov/#!documentDetail;D={{ document.id }}">RDG</a>
+                    </li>
+                    <li>
+                        <strong>Containing Docket:</strong>
+                        <a href="http://docketwrench.sunlightfoundation.com/docket/{{ document.docket.id }}">DW</a> / <a href="http://www.regulations.gov/#!docketDetail;D={{ document.docket.id }}">RDG</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>

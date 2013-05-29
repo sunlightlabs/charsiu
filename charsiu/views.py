@@ -15,7 +15,9 @@ class IndexView(TemplateView):
     template_name = "index.html"
 
     def get_context_data(self, **kwargs):
-        return {}
+        return {
+            'surveys': Survey.objects.all().order_by('completed', '-skipped', 'id')
+        }
 
 # comment viewer/survey
 class CommentForm(BetterForm):
@@ -148,6 +150,8 @@ class CommentView(FormView):
         ctx['submitter'] = dict(dict(ctx['document']['clean_details']).get('Submitter Information', []))
         ctx['combined_attachments'] = [{'title': 'Main Views', 'views': realize_views(ctx['document']['views'])}] + \
             [{'title': 'Attachment: ' + at['title'], 'views': realize_views(at['views'])} for at in ctx['document']['attachments']]
+
+        ctx['doc_types'] = {'proposed_rule': 'Proposed Rule', 'other': 'Other', 'rule': 'Rule', 'notice': 'Notice'}
 
         return ctx
 
