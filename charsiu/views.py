@@ -5,8 +5,10 @@ from django.conf import settings
 from django import forms
 
 from form_utils.forms import BetterForm
-import json, urllib2, urlparse
+import json, urllib2, urlparse, datetime
 import bs4
+
+from charsiu.charsiu_extras.models import Survey
 
 # index
 class IndexView(TemplateView):
@@ -121,7 +123,7 @@ class CommentForm(BetterForm):
 DW_ROOT = getattr(settings, "DW_ROOT", "http://docketwrench.sunlightfoundation.com/")
 class CommentView(FormView):
     template_name = "comment.html"
-    success_url = 'http://www.google.com'
+    success_url = '/'
     form_class = CommentForm
 
     def get(self, *args, **kwargs):
@@ -132,6 +134,13 @@ class CommentView(FormView):
         self.document_id = kwargs['document_id']
         return super(CommentView, self).post(*args, **kwargs)
 
+    def get_initial(self):
+        previous = list(Survey.objects.filter(id=self.document_id))
+        if previous:
+            return previous[0].response
+        else:
+            return {}
+
     def get_context_data(self, **kwargs):
         ctx = super(CommentView, self).get_context_data(**kwargs)
         
@@ -141,6 +150,23 @@ class CommentView(FormView):
             [{'title': 'Attachment: ' + at['title'], 'views': realize_views(at['views'])} for at in ctx['document']['attachments']]
 
         return ctx
+
+    def form_valid(self, form):
+        previous = list(Survey.objects.filter(id=self.document_id))
+        survey = previous[0] if previous else Survey()
+        survey = Survey()
+
+        survey.response = form.cleaned_data
+        survey.id = self.document_id
+        survey.completed = True
+        
+        if not survey.history:
+            survey.history = []
+        survey.history.append({'date': datetime.datetime.now()})
+
+        survey.save()
+
+        return super(CommentView, self).form_valid(form)
 
 # download and slightly mangle the views
 def realize_views(views):

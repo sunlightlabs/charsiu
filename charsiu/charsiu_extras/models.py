@@ -1,3 +1,8 @@
 from django.db import models
+from picklefield.fields import PickledObjectField
 
-# Create your models here.
+class Survey(models.Model):
+    id = models.CharField(max_length=64, primary_key=True)
+    completed = models.BooleanField(default=False)
+    history = PickledObjectField(default=[])
+    response = PickledObjectField(default={})
