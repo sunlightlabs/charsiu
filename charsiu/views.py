@@ -88,9 +88,22 @@ class CommentForm(BetterForm):
         widget = forms.RadioSelect,
         label = 'Describe the substantiveness of the comment:',
         choices = (
-            ('substantive', "This commenter makes expresses a substantive view that's supported by underlying data or facts"),
-            ('values', "This commenter expresses an emotional view that's not substantiated"),
+            ('substantive', "This commenter's statements are within the scope of the proposed action, are specific to the proposed action, have a direct relationship to the proposed action and include supporting reasons"),
+            ('values', "This commenter expresses an a view that's not substantiated"),
             ('neither', 'Neither'),
+            ('unsure', "Can't tell"),
+        )
+    )
+
+    topic = forms.ChoiceField(
+        widget = forms.RadioSelect,
+        label = 'Describe the predominant topic of this comment:',
+        choices = (
+            ('policy', "Policy arguments or discussion"),
+            ('values', "Values"),
+            ('science', "Scientific reasoning"),
+            ('tech', "Technical expertise"),
+            ('none', 'None of the above'),
             ('unsure', "Can't tell"),
         )
     )
@@ -117,7 +130,7 @@ class CommentForm(BetterForm):
     class Meta:
         fieldsets = [
             ('entities', {'fields': ['from_company', 'from_official', 'entity_info', 'entity_id', 'entity_name', 'entity_source', 'entity_source_annotation', 'entity_source_other'], 'legend': 'Submitter Information'}),
-            ('classification', {'fields': ['sentiment', 'substantiveness', 'big_small_government'], 'legend': 'Classification'}),
+            ('classification', {'fields': ['sentiment', 'substantiveness', 'topic', 'big_small_government'], 'legend': 'Classification'}),
             ('misc', {'fields': ['notes', 'flag', 'main_view'], 'legend': 'Additional Information'})
         ]
         row_attrs = {'entity_id': {'skip': True}, 'entity_name': {'skip': True}, 'entity_source_other': {'skip': True}}
@@ -162,7 +175,6 @@ class CommentView(FormView):
     def form_valid(self, form):
         previous = list(Survey.objects.filter(id=self.document_id))
         survey = previous[0] if previous else Survey()
-        survey = Survey()
 
         survey.response = form.cleaned_data
         survey.id = self.document_id
@@ -170,7 +182,7 @@ class CommentView(FormView):
         
         if not survey.history:
             survey.history = []
-        survey.history.append({'date': datetime.datetime.now()})
+        survey.history.append({'date': datetime.datetime.now(), 'username': self.request.user.username})
 
         survey.save()
 
