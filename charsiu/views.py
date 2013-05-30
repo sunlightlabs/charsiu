@@ -6,7 +6,7 @@ from django import forms
 
 from form_utils.forms import BetterForm
 import json, urllib2, urlparse, datetime
-import bs4
+import lxml.html
 
 from charsiu.charsiu_extras.models import Survey
 
@@ -217,7 +217,7 @@ def realize_views(views):
     for view in views:
         if view['extracted']:
             html = urllib2.urlopen(urlparse.urljoin(DW_ROOT, view['html'])).read()
-            doc = bs4.BeautifulSoup(html, 'html5lib')
-            view['body'] = u"".join([unicode(n) for n in doc.body.contents]) if doc.body else ""
-            view['styles'] = doc.head.findAll('style') if doc.head else []
+            doc = lxml.html.fromstring(html)
+            view['body'] = u"".join([lxml.html.tostring(n, encoding=unicode) for n in doc.body]) if doc.findall("body") else ""
+            view['styles'] = doc.head.findall("style") if doc.findall("head") else []
     return views

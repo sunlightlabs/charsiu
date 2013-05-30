@@ -1,6 +1,5 @@
 Django==1.5.1
 django-bootstrap-toolkit==2.12.0
 django-form-utils
-html5lib
-beautifulsoup4
+lxml
 django-picklefield==0.3.0
