@@ -18,8 +18,6 @@ def field_compare(object, fieldname, value):
             return False
     else:
         field = object.get(fieldname, None)
-        if not field:
-            return False
         if type(field) in (tuple, dict, list):
             return value in field
         elif value in EQUIVALENCIES:

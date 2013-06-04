@@ -31,7 +31,9 @@ class IndexView(TemplateView):
             'fields': [{
                 'name': "response__" + k,
                 'label': v.label,
-                'choices': v.choices
+                'choices': v.choices + (
+                    [('None', '[no response]')] if not v.required else []
+                )
             } for k, v in CommentForm().fields.items() if type(v) in (forms.ChoiceField, forms.MultipleChoiceField)] + \
                 [{'name': 'response__flag', 'label': "Flag for further review", 'choices': (('True', 'Yes'),)}]
         })
