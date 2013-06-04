@@ -13,9 +13,7 @@
                 <select id="model-filter">
                     <option value="" {% if not filter_name %}selected="selected"{% endif %}></option>
                     {% for field in fields %}
-                        {% with field_filter_name="response__"|add:field.name %}
-                            <option value="{{ field_filter_name }}" data-choices="{{ field.choices|jsonify|force_escape }}" {% if field_filter_name == filter_name %}selected="selected"{% endif %}>{{ field.label }}</option>
-                        {% endwith %}
+                        <option value="{{ field.name }}" data-choices="{{ field.choices|jsonify|force_escape }}" {% if field.name == filter_name %}selected="selected"{% endif %}>{{ field.label }}</option>
                     {% endfor %}
                 </select>
                 <span id="filter-choices">
@@ -23,13 +21,11 @@
                     <select>
                         <option value="" {% if not filter_value %}selected="selected"{% endif %}></option>
                         {% for field in fields %}
-                            {% with field_filter_name="response__"|add:field.name %}
-                                {% if field_filter_name == filter_name %}
-                                    {% for name, value in field.choices %}
-                                    <option value="{{ name }}" {% if name == filter_value %}selected="selected"{% endif %}>{{ value }}</option>
-                                    {% endfor %}
-                                {% endif %}
-                            {% endwith %}
+                            {% if field.name == filter_name %}
+                                {% for name, value in field.choices %}
+                                <option value="{{ name }}" {% if name == filter_value %}selected="selected"{% endif %}>{{ value }}</option>
+                                {% endfor %}
+                            {% endif %}
                         {% endfor %}
                     </select>
                     {% endif %}
@@ -50,7 +46,10 @@
                     {% with survey|survey_status as status %}
                     <tr class="{% if status == 'completed' %}success{% elif status == 'skipped' %}warning{% else %}info{% endif %}">
                         <td><a href="/comment/{{ survey.id }}">{{ survey.id }}</a></td>
-                        <td>{{ status|capfirst }}</td>
+                        <td>
+                            {{ status|capfirst }}
+                            {% if status == 'completed' and survey.response.flag %}<i class="icon-flag"></i>{% endif %}
+                        </td>
                     </tr>
                     {% endwith %}
                 {% endfor %}

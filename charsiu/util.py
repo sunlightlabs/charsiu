@@ -7,6 +7,7 @@ def import_file(filename):
             s.id = line
             s.save()
 
+EQUIVALENCIES = {'True': True, 'False': False, 'None': None}
 def field_compare(object, fieldname, value):
     if "__" in fieldname:
         fieldname_parts = fieldname.split("__", 1)
@@ -21,5 +22,7 @@ def field_compare(object, fieldname, value):
             return False
         if type(field) in (tuple, dict, list):
             return value in field
+        elif value in EQUIVALENCIES:
+            return field == EQUIVALENCIES[value]
         else:
             return field == value

@@ -29,12 +29,13 @@ class IndexView(TemplateView):
         ctx.update({
             'surveys': surveys,
             'fields': [{
-                'name': k,
+                'name': "response__" + k,
                 'label': v.label,
                 'choices': v.choices
-            } for k, v in CommentForm().fields.items() if type(v) in (forms.ChoiceField, forms.MultipleChoiceField)]
+            } for k, v in CommentForm().fields.items() if type(v) in (forms.ChoiceField, forms.MultipleChoiceField)] + \
+                [{'name': 'response__flag', 'label': "Flag for further review", 'choices': (('True', 'Yes'),)}]
         })
-        
+
         return ctx
 
 # comment viewer/survey
