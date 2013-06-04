@@ -102,6 +102,20 @@ class CommentForm(BetterForm):
         )
     )
 
+    sentiment_basis = forms.MultipleChoiceField(
+        widget = forms.CheckboxSelectMultiple,
+        label = 'If applicable, describe the basis on which the commenter expressed their criticism:',
+        choices = (
+            ('questons_info', "This commenter questions the adequacy and accuracy of information presented in the rule"),
+            ('new_info', "This commenter presents new information relevant to the analysis done in the rule"),
+            ('new_alternative', "This commenter presents reasonable alternatives to those presented in the rule"),
+            ('revisions', "This commenter presents revisions of some of the material in the rule"),
+            ('none', 'No basis'),
+            ('unsure', "Can't tell"),
+        ),
+        required=False
+    )
+
 
     substantiveness = forms.ChoiceField(
         widget = forms.RadioSelect,
@@ -114,8 +128,8 @@ class CommentForm(BetterForm):
         )
     )
 
-    topic = forms.ChoiceField(
-        widget = forms.RadioSelect,
+    topic = forms.MultipleChoiceField(
+        widget = forms.CheckboxSelectMultiple,
         label = 'Describe the predominant topic of this comment:',
         choices = (
             ('policy', "Policy arguments or discussion"),
@@ -127,7 +141,6 @@ class CommentForm(BetterForm):
         )
     )
 
-    # classification questions
     big_small_government = forms.ChoiceField(
         widget = forms.RadioSelect,
         label = 'Describe the perspective this comment expresses about government:',
@@ -149,7 +162,7 @@ class CommentForm(BetterForm):
     class Meta:
         fieldsets = [
             ('entities', {'fields': ['from_company', 'from_official', 'entity_info', 'entity_id', 'entity_name', 'entity_source', 'entity_source_annotation', 'entity_source_other'], 'legend': 'Submitter Information'}),
-            ('classification', {'fields': ['sentiment', 'substantiveness', 'topic', 'big_small_government'], 'legend': 'Classification'}),
+            ('classification', {'fields': ['sentiment', 'sentiment_basis', 'substantiveness', 'topic', 'big_small_government'], 'legend': 'Classification'}),
             ('misc', {'fields': ['notes', 'flag', 'main_view'], 'legend': 'Additional Information'})
         ]
         row_attrs = {'entity_id': {'skip': True}, 'entity_name': {'skip': True}, 'entity_source_other': {'skip': True}}
