@@ -97,9 +97,13 @@ class CommentForm(BetterForm):
         choices = (
             ('negative_rule', 'This commenter expresses a negative sentiment about the rule'),
             ('negative_general', 'This commenter expresses a negative sentiment, but not about the rule'),
+
+            ('negative_parts', 'This commenter expresses a negative sentiment about parts of the rule, but their overall sentiment is not explicitly positive or negative'),
+            ('neutral', 'This commenter expresses both positive and negative sentiments about parts of the rule, but their overall sentiment is not explicitly positive or negative'),
+            ('positive_parts', 'This commenter expresses a positive sentiment about parts of the rule, but their overall sentiment is not explicitly positive or negative'),
+
             ('positive_rule', 'This commenter expresses a positive sentiment about the rule'),
             ('positive_general', 'This commenter expresses a positive sentiment, but not about the rule'),
-            ('neutral', 'This commenter expresses a sentiment that is neither explicitly positive nor negative'),
             ('unsure', "Can't tell"),
         )
     )
