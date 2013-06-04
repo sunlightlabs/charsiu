@@ -15,9 +15,27 @@ class IndexView(TemplateView):
     template_name = "index.html"
 
     def get_context_data(self, **kwargs):
-        return {
-            'surveys': Survey.objects.all().order_by('completed', 'skipped', 'id')
-        }
+        ctx = {}
+        surveys = Survey.objects.all().order_by('completed', 'skipped', 'id')
+        filter_param = self.request.GET.get('filter', None)
+        if filter_param and ":" in filter_param:
+            filter_parts = filter_param.split(":")
+            print filter_parts
+            surveys = [survey for survey in surveys if survey.field_match(filter_parts[0], filter_parts[1])]
+            
+            ctx['filter_name'] = filter_parts[0]
+            ctx['filter_value'] = filter_parts[1]
+        
+        ctx.update({
+            'surveys': surveys,
+            'fields': [{
+                'name': k,
+                'label': v.label,
+                'choices': v.choices
+            } for k, v in CommentForm().fields.items() if type(v) in (forms.ChoiceField, forms.MultipleChoiceField)]
+        })
+        
+        return ctx
 
 # comment viewer/survey
 class CommentForm(BetterForm):

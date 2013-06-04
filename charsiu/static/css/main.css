@@ -112,3 +112,7 @@ input.inline {
     margin-top: 8px;
     float: right;
 }
+
+.filter select {
+    width: 350px;
+}

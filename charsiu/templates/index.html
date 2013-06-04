@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load charsiu_extras %}
+{% load jsonify %}
 
 {% block main %}
 <div class="container-fluid">
@@ -7,6 +8,33 @@
         <div class="span12">
             <a href="/next" class="btn btn-primary btn-large start">Start</a>
             <h2>Comments</h2>
+            <div class="filter">
+                <strong>Filter:</strong>
+                <select id="model-filter">
+                    <option value="" {% if not filter_name %}selected="selected"{% endif %}></option>
+                    {% for field in fields %}
+                        {% with field_filter_name="response__"|add:field.name %}
+                            <option value="{{ field_filter_name }}" data-choices="{{ field.choices|jsonify|force_escape }}" {% if field_filter_name == filter_name %}selected="selected"{% endif %}>{{ field.label }}</option>
+                        {% endwith %}
+                    {% endfor %}
+                </select>
+                <span id="filter-choices">
+                    {% if filter_name %}
+                    <select>
+                        <option value="" {% if not filter_value %}selected="selected"{% endif %}></option>
+                        {% for field in fields %}
+                            {% with field_filter_name="response__"|add:field.name %}
+                                {% if field_filter_name == filter_name %}
+                                    {% for name, value in field.choices %}
+                                    <option value="{{ name }}" {% if name == filter_value %}selected="selected"{% endif %}>{{ value }}</option>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endwith %}
+                        {% endfor %}
+                    </select>
+                    {% endif %}
+                </span>
+            </div>
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
@@ -28,4 +56,31 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+(function() {
+    $('#model-filter').on('change', function() {
+        var $this = $(this);
+        var choiceArea = $('#filter-choices').html("");
+
+        var selected = $this.find(':selected');
+        if (!selected.attr('value')) return;
+
+        var choiceSelect = $("<select><option value='' selected='selected'></option></select>");
+        $.each(selected.data('choices'), function(idx, val) {
+            choiceSelect.append("<option value='" + val[0] + "'>" + val[1] + "</option>");
+        })
+
+        choiceArea.append(choiceSelect);
+    })
+
+    $('#filter-choices').on('change', 'select', function() {
+        var $this = $(this);
+        var selected = $this.find(':selected');
+        if (!selected.attr('value')) return;
+
+        document.location.href = document.location.origin + document.location.pathname + "?filter=" + $('#model-filter').val() + ":" + selected.attr('value');
+    })
+})();
+</script>
 {% endblock %}

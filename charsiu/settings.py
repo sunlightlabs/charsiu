@@ -60,6 +60,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'bootstrap_toolkit',
+    'jsonify',
     'charsiu.charsiu_extras',
 )
 
