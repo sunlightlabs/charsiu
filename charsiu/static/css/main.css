@@ -116,3 +116,6 @@ input.inline {
 .filter select {
     width: 350px;
 }
+#clear-filters {
+    margin-top: -11px;
+}

@@ -34,6 +34,9 @@
                     </select>
                     {% endif %}
                 </span>
+                {% if filter_name %}
+                <input type="button" class="btn" value="Clear filters" id="clear-filters" />
+                {% endif %}
             </div>
             <table class="table table-striped table-hover">
                 <thead>
@@ -81,6 +84,9 @@
 
         document.location.href = document.location.origin + document.location.pathname + "?filter=" + $('#model-filter').val() + ":" + selected.attr('value');
     })
+    $('.filter').on('click', 'input#clear-filters', function() {
+        document.location.href = document.location.origin + document.location.pathname;
+    });
 })();
 </script>
 {% endblock %}
