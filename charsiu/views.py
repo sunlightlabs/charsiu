@@ -42,22 +42,14 @@ class IndexView(TemplateView):
 
 # comment viewer/survey
 class CommentForm(BetterForm):
-    from_company = forms.ChoiceField(
+    submitter_info = forms.ChoiceField(
         widget = forms.RadioSelect,
-        label = 'Was this comment submitted by or on behalf of an organization or company?',
+        label = 'Describe the submitter of this comment:',
         choices = (
-            ('yes', 'Yes'),
-            ('no', 'No'),
-            ('unsure', "Can't tell")
-        )
-    )
-
-    from_official = forms.ChoiceField(
-        widget = forms.RadioSelect,
-        label = 'Was this comment submitted by an elected official?',
-        choices = (
-            ('yes', 'Yes'),
-            ('no', 'No'),
+            ('from_company', 'This comment was submitted by or on behalf of an organization or company'),
+            ('from_official', 'This comment was submitted by an elected official'),
+            ('from_notable', 'This comment was submitted by an otherwise-notable individual (describe in notes)'),
+            ('other', 'Other'),
             ('unsure', "Can't tell")
         )
     )
@@ -167,7 +159,7 @@ class CommentForm(BetterForm):
 
     class Meta:
         fieldsets = [
-            ('entities', {'fields': ['from_company', 'from_official', 'entity_info', 'entity_id', 'entity_name', 'entity_source', 'entity_source_annotation', 'entity_source_other'], 'legend': 'Submitter Information'}),
+            ('entities', {'fields': ['submitter_info', 'entity_info', 'entity_id', 'entity_name', 'entity_source', 'entity_source_annotation', 'entity_source_other'], 'legend': 'Submitter Information'}),
             ('classification', {'fields': ['sentiment', 'sentiment_basis', 'substantiveness', 'topic', 'big_small_government'], 'legend': 'Classification'}),
             ('misc', {'fields': ['notes', 'flag', 'main_view'], 'legend': 'Additional Information'})
         ]
