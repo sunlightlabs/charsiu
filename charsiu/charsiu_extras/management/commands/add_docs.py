@@ -75,8 +75,7 @@ class Command(BaseCommand):
         count = int(args[0]) if args else 5
 
         terms = options['terms'] if options['terms'] else [""]
-        if options['agency']:
-            terms = [" ".join(filter(bool, ["agency:%s" % options['agency'], term])) for term in terms]
+        terms = [" ".join(filter(bool, ["agency:%s" % options['agency'] if options['agency'] else False, "type:public_submission", term])) for term in terms]
 
         docs = set()
         dockets = set()
