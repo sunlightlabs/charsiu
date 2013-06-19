@@ -171,7 +171,7 @@ body {
             $.each(matches, function(key, value) {
                 var textField = $('#id_' + value);
                 var parent = textField.parents('.control-group');
-                textField.addClass('inline').remove();
+                textField.remove();
                 parent.remove();
                 $this.find('input[value=' + key + ']').parent().append(textField);
             })

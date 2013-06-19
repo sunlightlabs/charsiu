@@ -46,9 +46,9 @@ class CommentForm(BetterForm):
         widget = forms.RadioSelect,
         label = 'Describe the submitter of this comment:',
         choices = (
-            ('from_company', 'This comment was submitted by or on behalf of an organization or company'),
-            ('from_official', 'This comment was submitted by an elected official'),
-            ('from_notable', 'This comment was submitted by an otherwise-notable individual (describe in notes)'),
+            ('from_company', 'This comment was submitted by or on behalf of one or more organizations or companies'),
+            ('from_official', 'This comment was submitted by one or more elected officials'),
+            ('from_notable', 'This comment was submitted by one or more otherwise-notable individuals (describe in notes)'),
             ('other', 'Other'),
             ('unsure', "Can't tell")
         )
@@ -58,14 +58,14 @@ class CommentForm(BetterForm):
     entity_info = forms.ChoiceField(
         widget = forms.RadioSelect(attrs={'data-textbox-mapping': json.dumps({'in_ie':'entity_id','not_in_ie':'entity_name'})}),
         required = False,
-        label = 'If applicable, which company or official, and is it/are they in Influence Explorer?',
+        label = 'If applicable, which company/companies or official(s), and is it/are they in Influence Explorer?',
         choices = (
-            ('in_ie', 'The entity is in Influence Explorer and its ID or URL is:'),
-            ('not_in_ie', 'The entity is not in Influence Explorer and its name is:'),
+            ('in_ie', 'They are in Influence Explorer and ID(s) or URL(s) are (one per line if multiple):'),
+            ('not_in_ie', 'They are not in Influence Explorer and their names are (one per line if multiple):'),
         )
     )
-    entity_id = forms.CharField(required = False)
-    entity_name = forms.CharField(required = False)
+    entity_id = forms.CharField(widget=forms.Textarea(attrs={'rows':2, 'cols':80, 'style': 'width:auto;'}), required=False)
+    entity_name = forms.CharField(widget=forms.Textarea(attrs={'rows':2, 'cols':80, 'style': 'width:auto;'}), required=False)
 
     # entity source
     entity_source = forms.MultipleChoiceField(
@@ -80,7 +80,7 @@ class CommentForm(BetterForm):
         )
     )
     entity_source_annotation = forms.CharField(widget=forms.HiddenInput(), required=False)
-    entity_source_other = forms.CharField(required=False)
+    entity_source_other = forms.CharField(widget=forms.Textarea(attrs={'rows':2, 'cols':80, 'style': 'width:auto;'}), required=False)
 
     # classification questions
     sentiment = forms.ChoiceField(
