@@ -3,9 +3,11 @@ def import_file(filename):
     for sline in open(filename, "r"):
         line = sline.strip()
         if line:
-            s = Survey()
-            s.id = line
-            s.save()
+            current = Survey.objects.filter(id=line)
+            if not len(current):
+                s = Survey()
+                s.id = line
+                s.save()
 
 EQUIVALENCIES = {'True': True, 'False': False, 'None': None}
 def field_compare(object, fieldname, value):
