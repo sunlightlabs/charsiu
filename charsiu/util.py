@@ -1,6 +1,10 @@
+import json
+
 def import_file(filename):
     from charsiu.charsiu_extras.models import Survey
-    for sline in open(filename, "r"):
+    infile = open(filename, "r")
+    records = json.load(infile) if filename.endswith(".json") else list(infile)
+    for sline in records:
         line = sline.strip()
         if line:
             current = Survey.objects.filter(id=line)
