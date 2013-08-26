@@ -48,10 +48,6 @@ class Command(BaseCommand):
             print "Responses:"
             field_totals = [totals[field][choice] for choice in choices]
 
-            # fix one mislabel
-            if field == 'big_small_government':
-                choices = [choice if choice != "positive_general" else "small_gov_general" for choice in choices]
-
             for item in zip(choices, [f[1] for f in sample.fields[field].choices]):
                 print " = ".join(item)
             print ""
