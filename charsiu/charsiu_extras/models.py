@@ -8,6 +8,7 @@ class Survey(models.Model):
     history = PickledObjectField(default=[])
     response = PickledObjectField(default={})
     skipped = models.BooleanField(default=False)
+    api_data = PickledObjectField(default={})
 
     def field_match(self, fieldname, value):
         return field_compare(self.__dict__, fieldname, value)
