@@ -22,3 +22,10 @@ def combine_submitter_info():
 
         print survey.id, survey.response['submitter_info']
         survey.save()
+
+def fix_big_gov_mislabel():
+    for survey in Survey.objects.filter(completed=True):
+        if survey.response['big_small_government'] == "positive_general":
+            survey.response['big_small_government'] = "small_gov_general"
+            print survey.id
+            survey.save()

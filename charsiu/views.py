@@ -146,7 +146,7 @@ class CommentForm(BetterForm):
             ('big_gov_specific', 'This comment advocates government intervention in this policy area'),
             ('big_gov_general', 'This comment advocates government intervention non-specifically'),
             ('small_gov_specific', 'This comment opposes government intervention in this policy area'),
-            ('positive_general', 'This comment opposes government intervention generally'),
+            ('small_gov_general', 'This comment opposes government intervention generally'),
             ('other', 'Other'),
             ('unsure', "Can't tell"),
         )
