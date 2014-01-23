@@ -166,6 +166,7 @@ class CommentForm(BetterForm):
         row_attrs = {'entity_id': {'skip': True}, 'entity_name': {'skip': True}, 'entity_source_other': {'skip': True}}
 
 DW_ROOT = getattr(settings, "DW_ROOT", "http://docketwrench.sunlightfoundation.com/")
+API_KEY = getattr(settings, "API_KEY", "")
 class CommentView(FormView):
     template_name = "comment.html"
     form_class = CommentForm
@@ -179,7 +180,7 @@ class CommentView(FormView):
         return super(CommentView, self).post(*args, **kwargs)
 
     def get_initial(self):
-        self.document = json.load(urllib2.urlopen(DW_ROOT + "api/1.0/document/%s" % self.document_id))
+        self.document = json.load(urllib2.urlopen(DW_ROOT + "api/1.0/document/%s?apikey=%s" % (self.document_id, API_KEY)))
         previous = list(Survey.objects.filter(id=self.document_id))
         if previous and previous[0].response:
             return previous[0].response
